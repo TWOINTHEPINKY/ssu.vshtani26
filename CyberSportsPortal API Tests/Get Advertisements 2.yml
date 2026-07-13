@@ -1,0 +1,41 @@
+info:
+  name: Get Advertisements 2
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/Advertisements/probabilities"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        test('Проверка: наличие полей key и value у первого элемента массива.', function() {
+          expect(response).to.be.an('array');
+          if (response.length > 0) {
+            expect(response[0]).to.have.property('key');
+            expect(response[0]).to.have.property('value');
+            expect(response[0].key).to.be.a('number');
+            expect(response[0].value).to.be.a('number');
+          } else {
+            console.warn('Массив пуст, проверка пропущена!');
+          }
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

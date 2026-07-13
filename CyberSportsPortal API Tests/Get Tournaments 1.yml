@@ -1,0 +1,36 @@
+info:
+  name: Get Tournaments 1
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/Tournaments/last"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        test('Проверка: наличие полей id и name у последнего турнира.', function() {
+          expect(response).to.be.an('object');
+          expect(response).to.have.property('id');
+          expect(response).to.have.property('name');
+          expect(response.id).to.be.a('number');
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isDefined
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

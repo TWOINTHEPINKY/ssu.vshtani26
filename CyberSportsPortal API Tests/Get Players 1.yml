@@ -1,0 +1,40 @@
+info:
+  name: Get Players 1
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/Players"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        test('Проверка: наличие поля id у первого игрока.', function() {
+          expect(response).to.be.an('array');
+          if (response.length > 0) {
+            expect(response[0]).to.have.property('id');
+            expect(response[0]).to.have.property('combinedName');
+            expect(response[0]).to.have.property('country');
+          } else {
+            console.warn('Список игроков пуст!');
+          }
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

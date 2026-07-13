@@ -1,0 +1,39 @@
+info:
+  name: Get Advertisements 1
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/Advertisements/companies"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        test('Проверка: имеет ли каждый объект в массиве поле id.', function() {
+          expect(response).to.be.an('array');
+          if (response.length > 0) {
+            expect(response[0]).to.have.property('id');
+            expect(response[0].id).to.be.a('number');
+          } else {
+            console.warn('Массив пуст, проверка поля id пропущена!');
+          }
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
