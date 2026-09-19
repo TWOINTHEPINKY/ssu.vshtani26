@@ -1,0 +1,47 @@
+info:
+  name: Get Teams 3
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/Teams/4/2021/income"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        const status = res.status;
+
+        test('Проверка: ответ на запрос дохода.', function() {
+          if (status === 200) {
+            expect(response).to.not.be.null;
+            if (typeof response === 'object' && response !== null) {
+              expect(response).to.be.an('object');
+            } else if (typeof response === 'number') {
+              expect(response).to.be.a('number');
+            } else {
+            }
+          } else if (status === 404) {
+            console.warn('Данные о доходе не найдены (404)');
+          } else {
+            expect.fail('Неожиданный статус: ' + status);
+          }
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isDefined
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

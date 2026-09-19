@@ -1,0 +1,40 @@
+info:
+  name: Get MatchHistory
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/MatchHistory/1"
+  headers:
+    - name: Accept
+      value: application/json
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        const response = res.body;
+        test('Проверка: наличие поля id у первого элемента истории.', function() {
+          expect(response).to.be.an('array');
+          if (response.length > 0) {
+            expect(response[0]).to.have.property('id');
+            expect(response[0]).to.have.property('winnerId');
+            expect(response[0]).to.have.property('loserId');
+          } else {
+            console.warn('История матчей для этого турнира пуста!');
+          }
+        });
+  assertions:
+    - expression: res.status
+      operator: eq
+      value: "200"
+    - expression: res.body
+      operator: isArray
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
